@@ -77,7 +77,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'movies' ,
-        'USER': 'postgre',
+        'USER': 'postgres',
         'PASSWORD': 'satyampostsql',
         'HOST' : 'localhost',
         'PORT': '5432',
@@ -131,8 +131,8 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
-DEFAULT_AUTO_FIELD = 'django.db.model.BigAutoFiled'
-MEDIA_URL = '/media'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR/ 'media'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
