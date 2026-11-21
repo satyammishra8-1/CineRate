@@ -1,0 +1,25 @@
+# Python bytecode & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+
+# Local SQLite databases
+*.sqlite3
+/movies
+
+# Local user-uploaded media files
+/media/
+
+# Environment variables & secrets
+.env
+
+# Collected static files in production
+/staticfiles/
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
