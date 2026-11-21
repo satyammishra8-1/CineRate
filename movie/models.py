@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
 class Movie(models.Model):
@@ -7,7 +8,12 @@ class Movie(models.Model):
     description = models.TextField()
     release_date = models.DateField()
     genre = models.CharField(max_length=100)
-    poster = models.ImageField(upload_to='poster/', blank=True, null=True)
+    poster = models.ImageField(
+        upload_to='poster/',
+        storage=MediaCloudinaryStorage(),
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.title
