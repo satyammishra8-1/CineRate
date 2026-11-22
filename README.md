@@ -1,123 +1,116 @@
 # CineRate
 
-### Discover Movies. Rate Experiences. Share Opinions.
+**A better way to discover, rate, and review movies.**
 
-A full-stack movie discovery and review platform built with **Python, Django, and PostgreSQL**. Discover movies, explore ratings, and share your opinions through a clean, responsive interface.
+CineRate is a full-stack movie discovery and review platform built with Python and Django. It brings movie browsing, community ratings, and user reviews together in one responsive application.
 
-<p align="center">
-  <a href="https://cinerate-ojlp.onrender.com/">
-    <img src="https://img.shields.io/badge/Live%20Demo-CineRate-FFB800?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo">
-  </a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Django-5.x-092E20?style=flat&logo=django&logoColor=white" alt="Django">
-  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL">
-  <img src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=flat&logo=githubactions&logoColor=white" alt="GitHub Actions">
-</p>
+**Live Application:** https://cinerate-ojlp.onrender.com/
 
 ---
 
-## 📌 Overview
+**TECHNOLOGY**
 
-**CineRate** is a responsive full-stack web application that brings movie discovery and community-driven reviews together.
+`Python 3.12` · `Django 5` · `PostgreSQL` · `Bootstrap 5` · `Cloudinary` · `GitHub Actions` · `Render`
 
-Users can explore movies, view average ratings, write reviews, and share their opinions through a modern interface designed for both desktop and mobile devices.
+---
 
-Developed as part of a Python Full-Stack Development training program, CineRate evolved into a deployed application involving backend engineering, relational database integration, cloud image storage, and automated CI/CD deployment.
+---
 
-## 🖥️ Application Preview
+## Overview
+
+**CineRate** is a full-stack web application that combines movie discovery with community-driven ratings and reviews.
+
+Users can browse movies, explore average ratings, write reviews, and manage their own contributions through a responsive interface.
+
+Originally developed during a Python Full-Stack Development training program, the project was extended into a deployed application with relational database integration, cloud-based poster storage, and an automated CI/CD workflow.
+
+## Application Screenshots
 
 ### Desktop Experience
 
-<!-- Add your desktop showcase image here -->
 ![CineRate Desktop Experience](screenshots/desktop-showcase.png)
-
-*Explore movies, discover ratings, and interact with the platform on desktop.*
 
 ### Mobile Experience
 
-<!-- Add your mobile showcase image here -->
 ![CineRate Mobile Experience](screenshots/mobile-showcase.png)
-
-*Responsive movie discovery and review experience optimized for mobile devices.*
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 | Feature | Description |
 |---|---|
-| 🎬 Movie Discovery | Browse movies with posters, descriptions, genres, and release dates. |
-| 🔐 Authentication | User registration, login, and logout functionality. |
-| ⭐ Rating System | Submit ratings from 1 to 5 stars and view average movie ratings. |
-| 💬 Review System | Write and read community movie reviews. |
-| ✏️ Review Management | Edit or delete your own reviews. |
-| 🛠️ Movie Management | Staff-authorized movie uploads. |
-| 🔎 Search & Filtering | Search movies by title and filter by genre or rating. |
-| 📱 Responsive UI | Dedicated mobile and desktop layouts. |
-| 🌗 Theme Switching | Switch between dark and light modes. |
-| 🔗 Movie Sharing | Share movie pages using native sharing or clipboard functionality. |
-| ☁️ Cloud Image Storage | Store movie poster images using Cloudinary. |
+| Movie Discovery | Browse movies with posters, descriptions, genres, and release dates |
+| User Authentication | Register, log in, and log out |
+| Movie Ratings | Rate movies from 1 to 5 stars |
+| Average Ratings | View average ratings calculated from submitted reviews |
+| Review Management | Create, edit, and delete your own reviews |
+| Movie Management | Staff-authorized movie uploads |
+| Search and Filtering | Search by movie title and explore genre and rating filters |
+| Responsive Interface | Dedicated desktop and mobile layouts |
+| Theme Switching | Switch between dark and light themes |
+| Movie Sharing | Share movie pages or copy their links |
+| Cloud Image Storage | Store uploaded movie posters using Cloudinary |
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technologies |
 |---|---|
-| Programming Language | Python |
-| Backend Framework | Django |
+| Language | Python 3.12 |
+| Backend | Django |
 | Database | PostgreSQL, SQLite |
 | Frontend | HTML5, CSS3, JavaScript |
 | UI Framework | Bootstrap 5 |
-| ORM | Django ORM |
-| Image Storage | Cloudinary |
+| Database Access | Django ORM |
+| Media Storage | Cloudinary |
 | Application Server | Gunicorn |
-| Static File Serving | WhiteNoise |
+| Static File Handling | WhiteNoise |
 | CI/CD | GitHub Actions |
 | Deployment | Render |
-| Version Control | Git & GitHub |
+| Version Control | Git, GitHub |
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
-CineRate follows a Django-based architecture connecting the user interface, application logic, database, and cloud image storage.
+CineRate uses Django to handle application requests, authentication, movie and review operations, and communication with its external services.
+
+![CineRate System Architecture](diagrams/architecture.png)
+
+### Architecture Flow
 
 ```mermaid
-flowchart TD
-    U["Users"]
-    UI["Responsive Frontend<br/>HTML · CSS · JavaScript · Bootstrap"]
-    DJ["Django Application"]
-    AUTH["Authentication & Authorization"]
-    MOV["Movie Management"]
-    REV["Reviews & Rating Logic"]
-    DB[("PostgreSQL Database")]
-    CLOUD["Cloudinary<br/>Movie Poster Storage"]
-    HOST["Render Hosting"]
+flowchart LR
+    U["User / Browser"] --> H["Render Hosting"]
+    H --> DJ["Django Application"]
 
-    U --> UI
-    UI --> DJ
-    DJ --> AUTH
-    DJ --> MOV
-    DJ --> REV
-    AUTH --> DB
-    MOV --> DB
-    REV --> DB
-    MOV --> CLOUD
-    DJ --> HOST
+    subgraph APP["Django Application"]
+        URL["URL Routing & Views"]
+        AUTH["Authentication & Forms"]
+        MODEL["Models & Django ORM"]
+        UI["Templates & Static Files"]
+        URL --> AUTH
+        URL --> MODEL
+        URL --> UI
+    end
+
+    DJ --> APP
+    MODEL <--> DB[("PostgreSQL")]
+    MODEL --> CL["Cloudinary"]
+    UI --> U
 ```
 
 ### Database Design
 
-The application uses two primary models:
+CineRate uses Django's built-in user model and two primary application models: `Movie` and `Review`.
 
-- **Movie:** Stores movie title, description, release date, genre, and poster.
-- **Review:** Stores the user, associated movie, rating, comment, and creation timestamp.
+- **Movie:** Stores the title, description, genre, release date, and poster.
+- **Review:** Stores the associated user, movie, rating, comment, and creation timestamp.
+- **User:** Uses Django authentication to manage user accounts.
 
-Each review belongs to one user and one movie. A database-level uniqueness constraint prevents the same user from reviewing the same movie more than once.
+Each review belongs to one user and one movie. A uniqueness constraint prevents a user from submitting multiple reviews for the same movie.
 
 ```mermaid
 erDiagram
@@ -125,24 +118,24 @@ erDiagram
     MOVIE ||--o{ REVIEW : receives
 
     USER {
-        int id PK
+        bigint id PK
         string username
         string email
     }
 
     MOVIE {
-        int id PK
+        bigint id PK
         string title
         text description
-        date release_date
         string genre
+        date release_date
         string poster
     }
 
     REVIEW {
-        int id PK
-        int user_id FK
-        int movie_id FK
+        bigint id PK
+        bigint user_id FK
+        bigint movie_id FK
         int rating
         text comment
         datetime created_at
@@ -151,131 +144,116 @@ erDiagram
 
 ---
 
-## ⚙️ CI/CD & Deployment
+## CI/CD and Deployment
 
-CineRate implements an automated CI/CD workflow using **GitHub Actions**.
+CineRate uses **GitHub Actions** to automate application validation and production deployment.
 
-The workflow validates application changes before triggering production deployment.
+The workflow runs on pushes and pull requests targeting `main`. Production deployment is triggered only after successful validation on a push to `main`.
 
-### Pipeline
+![CineRate CI/CD Pipeline](diagrams/cicd-pipeline.png)
 
-```mermaid
-flowchart TD
-    A["Code Push / Pull Request"] --> B["GitHub Actions"]
-    B --> C["Checkout Repository"]
-    C --> D["Setup Python 3.12"]
-    D --> E["Install Dependencies"]
-    E --> F["Check Database Migrations"]
-    F --> G["Django System Checks"]
-    G --> H["Collect Static Files"]
-    H --> I["Run Automated Tests"]
-    I --> J{"Checks Successful?"}
-    J -->|No| K["Workflow Fails"]
-    J -->|Yes| L{"Push to main?"}
-    L -->|No| M["Validation Complete"]
-    L -->|Yes| N["Trigger Render Deployment"]
-    N --> O["Live Application"]
-```
+### Workflow Stages
 
-### Automated Workflow Includes
+1. Check out the repository.
+2. Set up Python 3.12.
+3. Install project dependencies.
+4. Verify that no uncreated database migrations exist.
+5. Run Django system checks.
+6. Test static file collection.
+7. Execute the Django test suite.
+8. Trigger the Render deployment hook after successful validation on pushes to `main`.
 
-- Python environment setup.
-- Dependency installation.
-- Database migration validation.
-- Django system checks.
-- Static file collection.
-- Automated Django test execution.
-- Render deployment triggering after successful checks on pushes to `main`.
+The Render deployment hook URL is stored securely as a GitHub Actions secret named `RENDER_DEPLOY_HOOK_URL`.
 
 ---
 
-## 🚀 Run Locally
+## Run Locally
 
-Follow these steps to run CineRate on your local machine.
-
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/satyammishra8-1/CineRate.git
 cd CineRate
 ```
 
-### 2. Create a Virtual Environment
+### 2. Create and activate a virtual environment
 
 ```bash
 python -m venv venv
 ```
 
-Activate it:
+**Windows:**
 
 ```bash
-# Windows
 venv\Scripts\activate
+```
 
-# macOS / Linux
+**macOS / Linux:**
+
+```bash
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment Variables
+### 4. Configure environment variables
 
-Create a `.env` file or configure the following variables in your environment.
+Configure the following variables in your environment:
 
 | Variable | Purpose |
 |---|---|
 | `SECRET_KEY` | Django secret key |
-| `DEBUG` | Django debug configuration |
+| `DEBUG` | Django debug setting (`True` or `False`) |
 | `DATABASE_URL` | PostgreSQL connection URL |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
 | `CLOUDINARY_API_KEY` | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
 
-**Note:** The application falls back to SQLite when `DATABASE_URL` is not configured. PostgreSQL is used when a database URL is supplied.
+**Database configuration:** If `DATABASE_URL` is not provided, the application uses SQLite by default. When a valid database URL is supplied, it uses the configured database.
 
-Never commit real credentials or secrets to GitHub.
+For real Cloudinary media uploads, configure your own Cloudinary credentials. Never commit secrets or production credentials to GitHub.
 
-### 5. Apply Database Migrations
+### 5. Apply database migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 6. Create an Admin Account (Optional)
+### 6. Create an administrator account (optional)
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 7. Start the Development Server
+### 7. Start the development server
 
 ```bash
 python manage.py runserver
 ```
 
-Open the application:
+Open:
 
 `http://127.0.0.1:8000/`
 
 ---
 
-## 🧪 Testing
+## Testing
 
-Run the Django application tests using:
+Run the application tests:
 
 ```bash
 python manage.py test movie
 ```
 
-The same test command is integrated into the GitHub Actions CI workflow.
+The same test command is included in the GitHub Actions workflow.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 CineRate/
@@ -293,16 +271,21 @@ CineRate/
 ├── movie/
 │   ├── migrations/
 │   ├── static/
-│   │   └── movies/
 │   ├── templates/
-│   │   ├── movies/
-│   │   └── registration/
 │   ├── admin.py
 │   ├── forms.py
 │   ├── models.py
 │   ├── urls.py
 │   ├── views.py
 │   └── tests.py
+│
+├── screenshots/
+│   ├── desktop-showcase.png
+│   └── mobile-showcase.png
+│
+├── diagrams/
+│   ├── architecture.png
+│   └── cicd-pipeline.png
 │
 ├── manage.py
 ├── requirements.txt
@@ -311,19 +294,19 @@ CineRate/
 
 ---
 
-## 🎯 Engineering Experience
+## Engineering Experience
 
-Building CineRate provided practical experience in:
+Working on CineRate provided practical experience with:
 
-- Developing full-stack applications using Python and Django.
+- Building a full-stack web application using Python and Django.
 - Implementing authentication and authorization.
-- Designing relational database models and ORM relationships.
-- Integrating PostgreSQL and third-party cloud storage.
-- Building responsive desktop and mobile interfaces.
-- Deploying Django applications to Render.
-- Automating validation and deployment using GitHub Actions.
+- Designing relational data models and ORM relationships.
+- Integrating PostgreSQL and Cloudinary.
+- Developing responsive desktop and mobile interfaces.
+- Deploying a Django application on Render.
+- Configuring automated validation and deployment using GitHub Actions.
 
-## 🔮 Future Improvements
+## Future Improvements
 
 - Personalized movie recommendation system.
 - Advanced movie discovery and filtering.
@@ -333,22 +316,22 @@ Building CineRate provided practical experience in:
 
 ---
 
-## 👨‍💻 Developer
+## Developer
 
 **Satyam Mishra**
 
-Computer Science & Engineering Student | Full-Stack Developer
+Computer Science and Engineering Student | Full-Stack Developer
 
 <p>
   <a href="https://github.com/satyammishra8-1">
-    <img src="https://img.shields.io/badge/GitHub-satyammishra8--1-181717?style=for-the-badge&logo=github" alt="GitHub"/>
+    <img src="https://img.shields.io/badge/GitHub-View%20Profile-181717?style=for-the-badge&logo=github" alt="GitHub">
   </a>
   <a href="https://www.linkedin.com/in/satyam-mishra-42b806404/">
-    <img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn"/>
+    <img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn">
   </a>
 </p>
 
-🌐 **Live Project:** [CineRate](https://cinerate-ojlp.onrender.com)
+**Live Project:** [CineRate](https://cinerate-ojlp.onrender.com/)
 
 ---
 
