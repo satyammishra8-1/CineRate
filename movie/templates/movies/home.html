@@ -3,22 +3,46 @@
 {% block title %}Home - CineRate{% endblock %}
 
 {% block content %}
-<!-- Pill Search Bar (Works great on both Phone & Desktop) -->
-<div class="row mb-4">
+<!-- Phone App Welcome Strip -->
+<div class="d-md-none mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold text-light mb-0">Discover Movies</h5>
+            <small class="text-secondary">Tap any movie to rate & review</small>
+        </div>
+        <span class="badge rounded-pill cinerate-count-badge px-3 py-2">
+            {{ movies|length }} Titles
+        </span>
+    </div>
+</div>
+
+<!-- Unified Pill Search Bar -->
+<div class="row mb-3">
     <div class="col-12 col-md-8 mx-auto">
         <form method="get" action="{% url 'home' %}" class="cinerate-search-bar d-flex align-items-center px-3 py-1">
             <i class="bi bi-search text-warning me-2"></i>
             <input id="searchInput" type="text" name="q"
                    class="form-control bg-transparent border-0 text-light shadow-none"
-                   placeholder="Search movies by title..." value="{{ query|default:'' }}">
+                   placeholder="Search movies by title or genre..." value="{{ query|default:'' }}"
+                   autocomplete="off">
             {% if query %}
                 <a href="{% url 'home' %}" class="text-secondary me-2 text-decoration-none">
                     <i class="bi bi-x-circle-fill"></i>
                 </a>
             {% endif %}
-            <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3 fw-semibold">Search</button>
+            <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3 fw-semibold">Go</button>
         </form>
     </div>
+</div>
+
+<!-- One-Thumb Filter Chips (Phone & Tablet) -->
+<div class="cinerate-chips-row d-flex gap-2 mb-3 d-md-none" id="filterChips">
+    <button type="button" class="cinerate-chip active" data-filter="all">All</button>
+    <button type="button" class="cinerate-chip" data-filter="top">Top Rated 4★+</button>
+    <button type="button" class="cinerate-chip" data-filter="action">Action</button>
+    <button type="button" class="cinerate-chip" data-filter="drama">Drama</button>
+    <button type="button" class="cinerate-chip" data-filter="thriller">Thriller</button>
+    <button type="button" class="cinerate-chip" data-filter="comedy">Comedy</button>
 </div>
 
 {% if query %}
@@ -28,29 +52,38 @@
     </p>
 {% endif %}
 
-<!-- 1. PHONE VIEW ONLY: Option 3 Compact Horizontal Cards -->
-<div class="row g-3 d-md-none">
+<!-- 1. PHONE VIEW: Option 3 Compact Horizontal App Cards -->
+<div class="row g-3 d-md-none" id="mobileMovieList">
     {% for movie in movies %}
-        <div class="col-12">
+        <div class="col-12 movie-filter-item"
+             data-title="{{ movie.title|lower }}"
+             data-genre="{{ movie.genre|lower }}"
+             data-rating="{{ movie.average_rating }}">
             <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none">
-                <div class="cinerate-list-card d-flex align-items-center p-2 rounded-3">
+                <div class="cinerate-list-card d-flex align-items-center p-2 rounded-4">
                     <div class="cinerate-thumb-wrap flex-shrink-0">
                         {% if movie.poster %}
-                            <img src="{{ movie.poster.url }}" class="cinerate-thumb rounded-2" alt="{{ movie.title }}">
+                            <img src="{{ movie.poster.url }}" class="cinerate-thumb rounded-3" alt="{{ movie.title }}">
                         {% else %}
-                            <div class="cinerate-thumb rounded-2 bg-secondary d-flex align-items-center justify-content-center text-dark">
+                            <div class="cinerate-thumb rounded-3 bg-secondary d-flex align-items-center justify-content-center text-dark">
                                 <i class="bi bi-film fs-3"></i>
                             </div>
                         {% endif %}
                     </div>
 
                     <div class="ms-3 flex-grow-1 min-w-0">
-                        <h6 class="text-light fw-bold mb-1 text-truncate">{{ movie.title }}</h6>
-                        <div class="text-secondary small mb-1">
-                            {{ movie.release_date|date:"Y" }} • {{ movie.genre }}
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <h6 class="text-light fw-bold mb-1 text-truncate">{{ movie.title }}</h6>
                         </div>
 
-                        <div class="d-flex align-items-center mb-1">
+                        <div class="text-secondary small mb-2">
+                            <span>{{ movie.release_date|date:"Y" }}</span>
+                            <span class="mx-1">•</span>
+                            <span class="text-light-emphasis">{{ movie.genre }}</span>
+                        </div>
+
+                        <!-- Gold Star Row -->
+                        <div class="d-flex align-items-center mb-2">
                             <span class="text-warning me-2 small">
                                 {% with rating=movie.average_rating %}
                                     <i class="bi {% if rating >= 1 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
@@ -60,13 +93,16 @@
                                     <i class="bi {% if rating >= 5 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
                                 {% endwith %}
                             </span>
-                            <span class="text-warning fw-bold small">{{ movie.average_rating }} / 5</span>
+                            <span class="text-warning fw-bold small">{{ movie.average_rating }}</span>
+                            <span class="text-secondary small ms-1">/ 5</span>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-secondary small">({{ movie.reviews.count }} reviews)</span>
-                            <span class="badge border border-warning text-warning fw-normal px-2 py-1">
-                                View Details <i class="bi bi-chevron-right"></i>
+                            <span class="text-secondary small">
+                                <i class="bi bi-chat-left-text me-1"></i>{{ movie.reviews.count }} reviews
+                            </span>
+                            <span class="cinerate-pill-cta">
+                                Rate <i class="bi bi-chevron-right"></i>
                             </span>
                         </div>
                     </div>
@@ -78,9 +114,14 @@
             <h5>No movies found.</h5>
         </div>
     {% endfor %}
+
+    <div id="noFilterMatch" class="col-12 text-center text-secondary py-5 d-none">
+        <i class="bi bi-film fs-1 text-warning d-block mb-2"></i>
+        <h6>No matching movies found.</h6>
+    </div>
 </div>
 
-<!-- 2. DESKTOP & TABLET VIEW ONLY: Original Vertical Grid Cards -->
+<!-- 2. DESKTOP VIEW: Original Vertical Grid Cards -->
 <div class="row g-4 d-none d-md-flex">
     {% for movie in movies %}
         <div class="col-md-4 col-lg-3">
@@ -104,4 +145,58 @@
         </div>
     {% endfor %}
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const chips = document.querySelectorAll(".cinerate-chip");
+    const items = document.querySelectorAll(".movie-filter-item");
+    const noMatch = document.getElementById("noFilterMatch");
+    let activeFilter = "all";
+
+    function applyFilters() {
+        const term = (searchInput?.value || "").trim().toLowerCase();
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const title = item.dataset.title || "";
+            const genre = item.dataset.genre || "";
+            const rating = parseFloat(item.dataset.rating || "0");
+
+            const matchesSearch = !term || title.includes(term) || genre.includes(term);
+            let matchesChip = true;
+
+            if (activeFilter === "top") {
+                matchesChip = rating >= 4.0;
+            } else if (activeFilter !== "all") {
+                matchesChip = genre.includes(activeFilter);
+            }
+
+            if (matchesSearch && matchesChip) {
+                item.classList.remove("d-none");
+                visibleCount++;
+            } else {
+                item.classList.add("d-none");
+            }
+        });
+
+        if (noMatch) {
+            noMatch.classList.toggle("d-none", visibleCount > 0 || items.length === 0);
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("input", applyFilters);
+    }
+
+    chips.forEach(chip => {
+        chip.addEventListener("click", function () {
+            chips.forEach(c => c.classList.remove("active"));
+            this.classList.add("active");
+            activeFilter = this.dataset.filter;
+            applyFilters();
+        });
+    });
+});
+</script>
 {% endblock %}

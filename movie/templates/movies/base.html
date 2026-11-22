@@ -3,19 +3,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} CineRate{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0b0b0d">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="{% static 'movies/manifest.json' %}">
+    <title>{% block title %}CineRate{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'movies/style.css' %}">
 </head>
-<body>
+<body class="text-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-black border-bottom border-secondary">
+<!-- Top App Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark cinerate-topbar sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold text-warning" href="{% url 'home' %}">CineRate</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a class="navbar-brand fw-bold text-warning fs-4 d-flex align-items-center gap-2" href="{% url 'home' %}">
+            <span class="cinerate-logo-badge"><i class="bi bi-film"></i></span>
+            <span>CineRate</span>
+        </a>
+
+        <!-- Phone Profile Badge -->
+        <div class="d-lg-none">
+            {% if user.is_authenticated %}
+                <span class="badge rounded-pill bg-warning text-dark fw-semibold px-3 py-2">
+                    <i class="bi bi-person-fill"></i> {{ user.username }}
+                </span>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-warning btn-sm rounded-pill px-3 fw-semibold">
+                    Sign In
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Desktop Menu -->
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
@@ -36,10 +56,10 @@
     </div>
 </nav>
 
-<main class="container py-4">
+<main class="container py-3 cinerate-main">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-3" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -49,8 +69,40 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer class="text-center text-secondary py-3 border-top border-secondary">
-    <small>Mini CineRate &copy; 2026 — Built with Django</small>
+<!-- Android Bottom Navigation Bar (Phone Only) -->
+<nav class="navbar fixed-bottom navbar-dark cinerate-bottombar d-lg-none">
+    <div class="container d-flex justify-content-around text-center">
+        <a href="{% url 'home' %}" class="cinerate-nav-item active">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Home</span>
+        </a>
+        <a href="#searchInput" onclick="event.preventDefault(); const el = document.getElementById('searchInput'); if(el){ el.scrollIntoView({behavior:'smooth'}); el.focus(); }" class="cinerate-nav-item">
+            <i class="bi bi-search"></i>
+            <span>Search</span>
+        </a>
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link cinerate-nav-item p-0 border-0">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="cinerate-nav-item">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Login</span>
+            </a>
+            <a href="{% url 'register' %}" class="cinerate-nav-item">
+                <i class="bi bi-person-plus-fill"></i>
+                <span>Join</span>
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+<footer class="text-center text-secondary py-3 border-top border-secondary d-none d-lg-block">
+    <small>CineRate &copy; 2026 — Built with Django</small>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
