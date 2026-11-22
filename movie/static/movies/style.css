@@ -1,15 +1,46 @@
+/* Theme Variables: Default Dark Mode */
+:root {
+    --cr-bg: #0b0b0d;
+    --cr-surface: #16161a;
+    --cr-surface-alt: #121216;
+    --cr-border: #272730;
+    --cr-text: #f3f3f5;
+    --cr-muted: #9898a3;
+    --cr-accent: #ffc107;
+    --cr-accent-soft: rgba(255, 193, 7, 0.14);
+    --cr-accent-border: rgba(255, 193, 7, 0.45);
+    --cr-bar-bg: rgba(11, 11, 13, 0.92);
+    --cr-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* Bright / Light Mode Overrides */
+html.light-mode {
+    --cr-bg: #f4f5f7;
+    --cr-surface: #ffffff;
+    --cr-surface-alt: #fafafa;
+    --cr-border: #e1e3e8;
+    --cr-text: #141518;
+    --cr-muted: #5c606a;
+    --cr-accent: #d49400;
+    --cr-accent-soft: rgba(212, 148, 0, 0.12);
+    --cr-accent-border: rgba(212, 148, 0, 0.45);
+    --cr-bar-bg: rgba(255, 255, 255, 0.94);
+    --cr-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+}
+
 /* Lock horizontal scroll so Android users cannot drag the page side-to-side */
 html,
 body {
     max-width: 100%;
     overflow-x: hidden !important;
     overscroll-behavior-x: none;
-    background-color: #0b0b0d !important;
-    color: #e0e0e0;
+    background-color: var(--cr-bg) !important;
+    color: var(--cr-text) !important;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 main {
@@ -21,12 +52,32 @@ main {
     overflow-x: hidden;
 }
 
-/* Glassmorphic Top App Bar */
+.cinerate-heading {
+    color: var(--cr-text) !important;
+}
+
+.cinerate-muted {
+    color: var(--cr-muted) !important;
+}
+
+.cinerate-accent {
+    color: var(--cr-accent) !important;
+}
+
+/* Clean Top App Bar */
 .cinerate-topbar {
-    background: rgba(11, 11, 13, 0.9);
+    background: var(--cr-bar-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 193, 7, 0.2);
+    border-bottom: 1px solid var(--cr-border);
+}
+
+.cinerate-brand {
+    color: var(--cr-accent) !important;
+}
+
+.cinerate-navlink {
+    color: var(--cr-text) !important;
 }
 
 .cinerate-logo-badge {
@@ -41,23 +92,46 @@ main {
     font-size: 1rem;
 }
 
+.cinerate-theme-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--cr-border);
+    background-color: var(--cr-surface);
+    color: var(--cr-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.cinerate-theme-btn:active {
+    transform: scale(0.92);
+    border-color: var(--cr-accent);
+}
+
 .cinerate-count-badge {
-    background: rgba(255, 193, 7, 0.14);
-    color: #ffc107;
-    border: 1px solid rgba(255, 193, 7, 0.35);
+    background: var(--cr-accent-soft);
+    color: var(--cr-accent);
+    border: 1px solid var(--cr-accent-border);
     font-weight: 600;
 }
 
 /* Search Bar */
 .cinerate-search-bar {
-    background-color: #16161a;
-    border: 1px solid rgba(255, 193, 7, 0.55);
+    background-color: var(--cr-surface);
+    border: 1px solid var(--cr-accent-border);
     border-radius: 50px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    box-shadow: var(--cr-shadow);
 }
 
-.cinerate-search-bar input::placeholder {
-    color: #888;
+.cinerate-search-input {
+    color: var(--cr-text) !important;
+}
+
+.cinerate-search-input::placeholder {
+    color: var(--cr-muted);
 }
 
 /* Horizontal Scrollable Filter Chips */
@@ -73,9 +147,9 @@ main {
 }
 
 .cinerate-chip {
-    background-color: #16161a;
-    color: #ccc;
-    border: 1px solid #2e2e36;
+    background-color: var(--cr-surface);
+    color: var(--cr-muted);
+    border: 1px solid var(--cr-border);
     border-radius: 50px;
     padding: 6px 14px;
     font-size: 0.82rem;
@@ -93,15 +167,15 @@ main {
 
 /* Phone Option 3 List Cards */
 .cinerate-list-card {
-    background: linear-gradient(145deg, #17171c, #121216);
-    border: 1px solid #272730;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    background: linear-gradient(145deg, var(--cr-surface), var(--cr-surface-alt));
+    border: 1px solid var(--cr-border);
+    box-shadow: var(--cr-shadow);
     transition: transform 0.14s ease, border-color 0.14s ease;
 }
 
 .cinerate-list-card:active {
     transform: scale(0.975);
-    border-color: #ffc107;
+    border-color: var(--cr-accent);
 }
 
 .cinerate-thumb-wrap {
@@ -113,30 +187,30 @@ main {
     width: 78px;
     height: 112px;
     object-fit: cover;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }
 
 .cinerate-pill-cta {
     font-size: 0.78rem;
     font-weight: 600;
-    color: #ffc107;
-    background: rgba(255, 193, 7, 0.12);
-    border: 1px solid rgba(255, 193, 7, 0.4);
+    color: var(--cr-accent);
+    background: var(--cr-accent-soft);
+    border: 1px solid var(--cr-accent-border);
     border-radius: 50px;
     padding: 3px 10px;
 }
 
 /* Android Bottom Navigation Bar */
 .cinerate-bottombar {
-    background: rgba(11, 11, 13, 0.94);
+    background: var(--cr-bar-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-top: 1px solid rgba(255, 193, 7, 0.22);
+    border-top: 1px solid var(--cr-border);
     padding: 8px 0 env(safe-area-inset-bottom, 8px);
 }
 
 .cinerate-nav-item {
-    color: #8e8e98;
+    color: var(--cr-muted);
     text-decoration: none;
     font-size: 0.72rem;
     display: flex;
@@ -151,19 +225,20 @@ main {
 
 .cinerate-nav-item.active,
 .cinerate-nav-item:active {
-    color: #ffc107;
+    color: var(--cr-accent);
 }
 
 /* Desktop Grid Cards */
 .movie-card {
-    background-color: #16161a !important;
-    border: 1px solid #2c2c34 !important;
+    background-color: var(--cr-surface) !important;
+    border: 1px solid var(--cr-border) !important;
+    box-shadow: var(--cr-shadow);
     transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .movie-card:hover {
     transform: translateY(-4px);
-    border-color: #ffc107 !important;
+    border-color: var(--cr-accent) !important;
 }
 
 .movie-poster {
@@ -173,46 +248,48 @@ main {
 
 .poster-placeholder {
     height: 360px;
-    background-color: #222;
+    background-color: var(--cr-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #777;
+    color: var(--cr-muted);
     font-size: 3rem;
 }
 
 /* Ratings, Reviews, Forms & Dark Cards */
 .rating {
-    color: #ffc107;
+    color: var(--cr-accent);
     font-weight: bold;
 }
 
-.review-box {
-    background-color: #1e1e1e;
-    border: 1px solid #333;
+.review-box,
+.card-dark {
+    background-color: var(--cr-surface);
+    color: var(--cr-text);
+    border: 1px solid var(--cr-border);
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
 }
 
 .form-control, .form-select {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    border: 1px solid #444;
+    background-color: var(--cr-surface);
+    color: var(--cr-text);
+    border: 1px solid var(--cr-border);
 }
 
 .form-control:focus, .form-select:focus {
-    background-color: #2a2a2a;
-    color: #fff;
-    border-color: #ffc107;
+    background-color: var(--cr-surface);
+    color: var(--cr-text);
+    border-color: var(--cr-accent);
     box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
 }
 
 .form-control::placeholder {
-    color: #888;
+    color: var(--cr-muted);
 }
 
-.card-dark {
-    background-color: #1e1e1e;
-    border: 1px solid #333;
+.cinerate-footer {
+    color: var(--cr-muted);
+    border-top: 1px solid var(--cr-border);
 }

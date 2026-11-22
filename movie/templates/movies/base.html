@@ -4,43 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0b0b0d">
+    <meta name="theme-color" content="#0b0b0d" id="metaThemeColor">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="{% static 'movies/manifest.json' %}">
     <title>{% block title %}CineRate{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'movies/style.css' %}">
+    <script>
+        // Apply saved theme immediately so there is no screen flash
+        if (localStorage.getItem("cinerate_theme") === "light") {
+            document.documentElement.classList.add("light-mode");
+        }
+    </script>
 </head>
-<body class="text-light">
+<body>
 
-<!-- Top App Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark cinerate-topbar sticky-top">
+<!-- Clean Top App Bar -->
+<nav class="navbar navbar-expand-lg cinerate-topbar sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold text-warning fs-4 d-flex align-items-center gap-2" href="{% url 'home' %}">
+        <a class="navbar-brand fw-bold cinerate-brand fs-4 d-flex align-items-center gap-2" href="{% url 'home' %}">
             <span class="cinerate-logo-badge"><i class="bi bi-film"></i></span>
             <span>CineRate</span>
         </a>
 
-        <!-- Phone Profile Badge -->
-        <div class="d-lg-none">
+        <!-- Phone Right Controls: User Badge (if logged in) + Theme Toggle -->
+        <div class="d-flex align-items-center gap-2 d-lg-none">
             {% if user.is_authenticated %}
                 <span class="badge rounded-pill bg-warning text-dark fw-semibold px-3 py-2">
                     <i class="bi bi-person-fill"></i> {{ user.username }}
                 </span>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn btn-outline-warning btn-sm rounded-pill px-3 fw-semibold">
-                    Sign In
-                </a>
             {% endif %}
+            <button type="button" class="cinerate-theme-btn" id="themeToggleMobile" aria-label="Switch Theme" title="Switch Dark / Bright Mode">
+                <i class="bi bi-sun-fill" id="themeIconMobile"></i>
+            </button>
         </div>
 
         <!-- Desktop Menu -->
         <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link cinerate-navlink" href="{% url 'home' %}">Home</a></li>
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><span class="nav-link text-warning">Hi, {{ user.username }}</span></li>
+                    <li class="nav-item"><span class="nav-link text-warning fw-semibold">Hi, {{ user.username }}</span></li>
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}" class="d-inline">
                             {% csrf_token %}
@@ -48,9 +53,14 @@
                         </form>
                     </li>
                 {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"><a class="btn btn-warning btn-sm ms-lg-2" href="{% url 'register' %}">Register</a></li>
+                    <li class="nav-item"><a class="nav-link cinerate-navlink" href="{% url 'login' %}">Login</a></li>
+                    <li class="nav-item"><a class="btn btn-warning btn-sm fw-semibold" href="{% url 'register' %}">Register</a></li>
                 {% endif %}
+                <li class="nav-item ms-lg-2">
+                    <button type="button" class="cinerate-theme-btn" id="themeToggleDesktop" aria-label="Switch Theme" title="Switch Dark / Bright Mode">
+                        <i class="bi bi-sun-fill" id="themeIconDesktop"></i>
+                    </button>
+                </li>
             </ul>
         </div>
     </div>
@@ -70,7 +80,7 @@
 </main>
 
 <!-- Android Bottom Navigation Bar (Phone Only) -->
-<nav class="navbar fixed-bottom navbar-dark cinerate-bottombar d-lg-none">
+<nav class="navbar fixed-bottom cinerate-bottombar d-lg-none">
     <div class="container d-flex justify-content-around text-center">
         <a href="{% url 'home' %}" class="cinerate-nav-item active">
             <i class="bi bi-house-door-fill"></i>
@@ -101,11 +111,48 @@
     </div>
 </nav>
 
-<footer class="text-center text-secondary py-3 border-top border-secondary d-none d-lg-block">
+<footer class="text-center cinerate-footer py-3 d-none d-lg-block">
     <small>CineRate &copy; 2026 — Built with Django</small>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const root = document.documentElement;
+    const metaTheme = document.getElementById("metaThemeColor");
+    const icons = [
+        document.getElementById("themeIconMobile"),
+        document.getElementById("themeIconDesktop")
+    ];
+    const buttons = [
+        document.getElementById("themeToggleMobile"),
+        document.getElementById("themeToggleDesktop")
+    ];
+
+    function syncThemeUI() {
+        const isLight = root.classList.contains("light-mode");
+        icons.forEach(icon => {
+            if (!icon) return;
+            icon.className = isLight ? "bi bi-moon-stars-fill" : "bi bi-sun-fill";
+        });
+        if (metaTheme) {
+            metaTheme.setAttribute("content", isLight ? "#f4f5f7" : "#0b0b0d");
+        }
+    }
+
+    syncThemeUI();
+
+    buttons.forEach(btn => {
+        if (!btn) return;
+        btn.addEventListener("click", function () {
+            root.classList.toggle("light-mode");
+            const isLight = root.classList.contains("light-mode");
+            localStorage.setItem("cinerate_theme", isLight ? "light" : "dark");
+            syncThemeUI();
+        });
+    });
+});
+</script>
 <script src="{% static 'movies/script.js' %}"></script>
 </body>
 </html>
