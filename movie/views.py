@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Movie, Review
-from .forms import RegisterForm, ReviewForm
+from .forms import RegisterForm, ReviewForm, MovieForm
 
 
 # ---------- Step 6 & 10: Home page with search ----------
@@ -96,3 +96,22 @@ def delete_review(request, review_id):
         return redirect('movie_detail', movie_id=movie_id)
 
     return render(request, 'movies/delete_review.html', {'review': review})
+
+
+# ---------- Admin / Staff: Add Movie ----------
+@login_required
+def add_movie(request):
+    if not request.user.is_staff:
+        messages.error(request, 'Only admin/staff accounts can upload movies.')
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = MovieForm(request.POST, request.FILES)
+        if form.is_valid():
+            movie = form.save()
+            messages.success(request, f'"{movie.title}" has been uploaded!')
+            return redirect('movie_detail', movie_id=movie.id)
+    else:
+        form = MovieForm()
+
+    return render(request, 'movies/add_movie.html', {'form': form})
