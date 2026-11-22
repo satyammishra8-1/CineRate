@@ -70,3 +70,64 @@ main {
     background-color: #1e1e1e;
     border: 1px solid #333;
 }
+
+body {
+    background-color: #0d0d0d !important;
+}
+
+/* Search Bar */
+.cinerate-search-bar {
+    background-color: #161616;
+    border: 1px solid #d4a017;
+    border-radius: 50px;
+}
+
+.cinerate-search-bar input::placeholder {
+    color: #888;
+}
+
+/* Phone Option 3 List Cards */
+.cinerate-list-card {
+    background-color: #161616;
+    border: 1px solid #2c2c2c;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.cinerate-list-card:hover,
+.cinerate-list-card:active {
+    border-color: #ffc107;
+    transform: scale(0.99);
+}
+
+.cinerate-thumb-wrap {
+    width: 74px;
+    height: 108px;
+}
+
+.cinerate-thumb {
+    width: 74px;
+    height: 108px;
+    object-fit: cover;
+}
+
+/* Desktop Grid Cards (Keeps your original PC look) */
+.movie-card {
+    background-color: #161616 !important;
+    border: 1px solid #2c2c2c !important;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-4px);
+    border-color: #ffc107 !important;
+}
+
+.movie-poster {
+    height: 360px;
+    object-fit: cover;
+}
+
+.poster-placeholder {
+    height: 360px;
+    background-color: #222;
+}

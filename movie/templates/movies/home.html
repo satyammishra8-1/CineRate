@@ -1,27 +1,90 @@
 {% extends 'movies/base.html' %}
 
-{% block title %}Home -  CineRate{% endblock %}
+{% block title %}Home - CineRate{% endblock %}
 
 {% block content %}
+<!-- Pill Search Bar (Works great on both Phone & Desktop) -->
 <div class="row mb-4">
-    <div class="col-md-8 mx-auto">
-        <form method="get" action="{% url 'home' %}" class="d-flex">
-            <input type="text" name="q" class="form-control me-2"
-                   placeholder="Search movies by title..." value="{{ query }}">
-            <button type="submit" class="btn btn-warning">Search</button>
+    <div class="col-12 col-md-8 mx-auto">
+        <form method="get" action="{% url 'home' %}" class="cinerate-search-bar d-flex align-items-center px-3 py-1">
+            <i class="bi bi-search text-warning me-2"></i>
+            <input id="searchInput" type="text" name="q"
+                   class="form-control bg-transparent border-0 text-light shadow-none"
+                   placeholder="Search movies by title..." value="{{ query|default:'' }}">
+            {% if query %}
+                <a href="{% url 'home' %}" class="text-secondary me-2 text-decoration-none">
+                    <i class="bi bi-x-circle-fill"></i>
+                </a>
+            {% endif %}
+            <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3 fw-semibold">Search</button>
         </form>
     </div>
 </div>
 
 {% if query %}
-    <p class="text-secondary">Showing results for "<strong class="text-warning">{{ query }}</strong>"
-       — <a href="{% url 'home' %}" class="text-warning">clear</a></p>
+    <p class="text-secondary small mb-3">
+        Showing results for "<strong class="text-warning">{{ query }}</strong>"
+        — <a href="{% url 'home' %}" class="text-warning">clear</a>
+    </p>
 {% endif %}
 
-<div class="row g-4">
+<!-- 1. PHONE VIEW ONLY: Option 3 Compact Horizontal Cards -->
+<div class="row g-3 d-md-none">
     {% for movie in movies %}
-        <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="card movie-card h-100 text-light">
+        <div class="col-12">
+            <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none">
+                <div class="cinerate-list-card d-flex align-items-center p-2 rounded-3">
+                    <div class="cinerate-thumb-wrap flex-shrink-0">
+                        {% if movie.poster %}
+                            <img src="{{ movie.poster.url }}" class="cinerate-thumb rounded-2" alt="{{ movie.title }}">
+                        {% else %}
+                            <div class="cinerate-thumb rounded-2 bg-secondary d-flex align-items-center justify-content-center text-dark">
+                                <i class="bi bi-film fs-3"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="ms-3 flex-grow-1 min-w-0">
+                        <h6 class="text-light fw-bold mb-1 text-truncate">{{ movie.title }}</h6>
+                        <div class="text-secondary small mb-1">
+                            {{ movie.release_date|date:"Y" }} • {{ movie.genre }}
+                        </div>
+
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="text-warning me-2 small">
+                                {% with rating=movie.average_rating %}
+                                    <i class="bi {% if rating >= 1 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 2 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 3 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 4 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 5 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                {% endwith %}
+                            </span>
+                            <span class="text-warning fw-bold small">{{ movie.average_rating }} / 5</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-secondary small">({{ movie.reviews.count }} reviews)</span>
+                            <span class="badge border border-warning text-warning fw-normal px-2 py-1">
+                                View Details <i class="bi bi-chevron-right"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center text-secondary py-5">
+            <h5>No movies found.</h5>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- 2. DESKTOP & TABLET VIEW ONLY: Original Vertical Grid Cards -->
+<div class="row g-4 d-none d-md-flex">
+    {% for movie in movies %}
+        <div class="col-md-4 col-lg-3">
+            <div class="card movie-card h-100 text-light bg-dark border-secondary">
                 {% if movie.poster %}
                     <img src="{{ movie.poster.url }}" class="card-img-top movie-poster" alt="{{ movie.title }}">
                 {% else %}
@@ -29,8 +92,8 @@
                 {% endif %}
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">{{ movie.title }}</h5>
-                    <p class="card-text text-secondary mb-2">{{ movie.release_year }}</p>
-                    <p class="rating mb-3"> {{ movie.average_rating }} / 5</p>
+                    <p class="card-text text-secondary mb-2">{{ movie.release_date|date:"Y" }}</p>
+                    <p class="rating text-warning fw-bold mb-3">★ {{ movie.average_rating }} / 5</p>
                     <a href="{% url 'movie_detail' movie.id %}" class="btn btn-outline-warning mt-auto">View Details</a>
                 </div>
             </div>
