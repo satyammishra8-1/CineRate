@@ -39,6 +39,9 @@ jobs:
       - name: Run Django system checks
         run: python manage.py check
 
+      - name: Test static files collection
+        run: python manage.py collectstatic --noinput
+
       - name: Run automated test suite
         run: python manage.py test movie
 
