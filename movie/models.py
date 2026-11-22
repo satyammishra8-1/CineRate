@@ -1,6 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
-from cloudinary_storage.storage import MediaCloudinaryStorage
+from django.conf import settings
 
 
 class Movie(models.Model):
@@ -10,7 +9,6 @@ class Movie(models.Model):
     genre = models.CharField(max_length=100)
     poster = models.ImageField(
         upload_to='poster/',
-        storage=MediaCloudinaryStorage(),
         blank=True,
         null=True
     )
@@ -28,7 +26,7 @@ class Movie(models.Model):
 
 class Review(models.Model):
     RATING_CHOICE = [(i, str(i)) for i in range(1, 6)]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField(choices=RATING_CHOICE)
     comment = models.TextField()
