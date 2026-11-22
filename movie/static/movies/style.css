@@ -170,6 +170,8 @@ main {
     background: linear-gradient(145deg, var(--cr-surface), var(--cr-surface-alt));
     border: 1px solid var(--cr-border);
     box-shadow: var(--cr-shadow);
+    max-width: 100%;
+    overflow: hidden;
     transition: transform 0.14s ease, border-color 0.14s ease;
 }
 
@@ -188,6 +190,25 @@ main {
     height: 112px;
     object-fit: cover;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.cinerate-share-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--cr-border);
+    background: var(--cr-surface-alt);
+    color: var(--cr-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+}
+
+.cinerate-share-btn:active {
+    color: var(--cr-accent);
+    border-color: var(--cr-accent-border);
 }
 
 .cinerate-pill-cta {

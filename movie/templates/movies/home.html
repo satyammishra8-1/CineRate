@@ -59,53 +59,63 @@
              data-title="{{ movie.title|lower }}"
              data-genre="{{ movie.genre|lower }}"
              data-rating="{{ movie.average_rating }}">
-            <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none">
-                <div class="cinerate-list-card d-flex align-items-center p-2 rounded-4">
-                    <div class="cinerate-thumb-wrap flex-shrink-0">
-                        {% if movie.poster %}
-                            <img src="{{ movie.poster.url }}" class="cinerate-thumb rounded-3" alt="{{ movie.title }}">
-                        {% else %}
-                            <div class="cinerate-thumb rounded-3 bg-secondary d-flex align-items-center justify-content-center text-dark">
-                                <i class="bi bi-film fs-3"></i>
-                            </div>
-                        {% endif %}
+            <div class="cinerate-list-card d-flex align-items-center p-2 rounded-4 overflow-hidden">
+                <a href="{% url 'movie_detail' movie.id %}" class="cinerate-thumb-wrap flex-shrink-0 text-decoration-none">
+                    {% if movie.poster %}
+                        <img src="{{ movie.poster.url }}" class="cinerate-thumb rounded-3" alt="{{ movie.title }}">
+                    {% else %}
+                        <div class="cinerate-thumb rounded-3 bg-secondary d-flex align-items-center justify-content-center text-dark">
+                            <i class="bi bi-film fs-3"></i>
+                        </div>
+                    {% endif %}
+                </a>
+
+                <div class="ms-3 flex-grow-1 min-w-0 overflow-hidden">
+                    <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none d-block">
+                        <h6 class="cinerate-heading fw-bold mb-1 text-truncate">{{ movie.title }}</h6>
+                    </a>
+
+                    <div class="cinerate-muted small mb-2 text-truncate">
+                        <span>{{ movie.release_date|date:"Y" }}</span>
+                        <span class="mx-1">•</span>
+                        <span>{{ movie.genre }}</span>
                     </div>
 
-                    <div class="ms-3 flex-grow-1 min-w-0">
-                        <h6 class="cinerate-heading fw-bold mb-1 text-truncate">{{ movie.title }}</h6>
+                    <!-- Gold Star Row -->
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="cinerate-accent me-2 small flex-shrink-0">
+                            {% with rating=movie.average_rating %}
+                                <i class="bi {% if rating >= 1 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                <i class="bi {% if rating >= 2 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                <i class="bi {% if rating >= 3 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                <i class="bi {% if rating >= 4 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                <i class="bi {% if rating >= 5 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                            {% endwith %}
+                        </span>
+                        <span class="cinerate-accent fw-bold small">{{ movie.average_rating }}</span>
+                        <span class="cinerate-muted small ms-1">/ 5</span>
+                    </div>
 
-                        <div class="cinerate-muted small mb-2">
-                            <span>{{ movie.release_date|date:"Y" }}</span>
-                            <span class="mx-1">•</span>
-                            <span>{{ movie.genre }}</span>
-                        </div>
-
-                        <!-- Gold Star Row -->
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="cinerate-accent me-2 small">
-                                {% with rating=movie.average_rating %}
-                                    <i class="bi {% if rating >= 1 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
-                                    <i class="bi {% if rating >= 2 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
-                                    <i class="bi {% if rating >= 3 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
-                                    <i class="bi {% if rating >= 4 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
-                                    <i class="bi {% if rating >= 5 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
-                                {% endwith %}
-                            </span>
-                            <span class="cinerate-accent fw-bold small">{{ movie.average_rating }}</span>
-                            <span class="cinerate-muted small ms-1">/ 5</span>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="cinerate-muted small">
-                                <i class="bi bi-chat-left-text me-1"></i>{{ movie.reviews.count }} reviews
-                            </span>
-                            <span class="cinerate-pill-cta">
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <span class="cinerate-muted small text-truncate">
+                            <i class="bi bi-chat-left-text me-1"></i>{{ movie.reviews.count }} reviews
+                        </span>
+                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                            <button type="button"
+                                    class="cinerate-share-btn"
+                                    data-title="{{ movie.title }}"
+                                    data-url="{% url 'movie_detail' movie.id %}"
+                                    aria-label="Share {{ movie.title }}"
+                                    title="Share movie">
+                                <i class="bi bi-share-fill"></i>
+                            </button>
+                            <a href="{% url 'movie_detail' movie.id %}" class="cinerate-pill-cta text-decoration-none">
                                 Rate <i class="bi bi-chevron-right"></i>
-                            </span>
+                            </a>
                         </div>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
     {% empty %}
         <div class="col-12 text-center cinerate-muted py-5">
@@ -217,6 +227,28 @@ document.addEventListener("DOMContentLoaded", function () {
             this.classList.add("active");
             activeFilter = this.dataset.filter;
             applyFilters();
+        });
+    });
+
+    document.querySelectorAll(".cinerate-share-btn").forEach(btn => {
+        btn.addEventListener("click", async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const title = this.dataset.title || "CineRate";
+            const fullUrl = new URL(this.dataset.url, window.location.origin).href;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: title + " — CineRate", url: fullUrl });
+                    return;
+                } catch (_) {}
+            }
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(fullUrl);
+                const original = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check2"></i>';
+                setTimeout(() => { this.innerHTML = original; }, 1400);
+            }
         });
     });
 });
