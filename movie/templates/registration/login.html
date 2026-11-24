@@ -1,34 +1,78 @@
 {% extends 'movies/base.html' %}
 
-{% block title %}Login - Mini CineRate{% endblock %}
+{% block title %}Login - CineRate{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card card-dark p-4">
-            <h2 class="text-warning mb-3">Login</h2>
+    <div class="col-12 col-md-6 col-lg-5">
+        <div class="card card-dark rounded-4 p-4">
+            <h2 class="cinerate-accent fw-bold mb-1">Welcome Back</h2>
+            <p class="cinerate-muted small mb-4">Sign in to rate movies and post reviews.</p>
 
             {% if form.errors %}
-                <div class="alert alert-danger">Invalid username or password.</div>
+                <div class="alert alert-danger py-2 small">
+                    Incorrect username or password. Please try again.
+                </div>
             {% endif %}
 
             <form method="post">
                 {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+
                 <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" required autofocus>
+                    <label for="id_username" class="form-label cinerate-heading fw-semibold small">Username</label>
+                    <input type="text"
+                           id="id_username"
+                           name="username"
+                           value="{{ form.username.value|default:'' }}"
+                           class="form-control"
+                           placeholder="Enter your username"
+                           autocomplete="username"
+                           required
+                           autofocus>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" required>
+                    <label for="id_password" class="form-label cinerate-heading fw-semibold small">Password</label>
+                    <div class="input-group">
+                        <input type="password"
+                               id="id_password"
+                               name="password"
+                               class="form-control"
+                               placeholder="Enter your password"
+                               autocomplete="current-password"
+                               required>
+                        <button type="button"
+                                class="btn btn-outline-secondary toggle-pw-btn"
+                                data-target="id_password"
+                                aria-label="Toggle password visibility">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-warning w-100">Login</button>
+
+                <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark rounded-pill py-2 mt-2">
+                    Login
+                </button>
             </form>
 
-            <p class="text-secondary mt-3 mb-0">
-                Don't have an account? <a href="{% url 'register' %}" class="text-warning">Register</a>
+            <p class="cinerate-muted small mt-3 mb-0 text-center">
+                Don't have an account? <a href="{% url 'register' %}" class="cinerate-accent fw-semibold">Register</a>
             </p>
         </div>
     </div>
 </div>
+
+<script>
+document.querySelectorAll(".toggle-pw-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+        const input = document.getElementById(this.dataset.target);
+        const icon = this.querySelector("i");
+        if (!input) return;
+        const show = input.type === "password";
+        input.type = show ? "text" : "password";
+        icon.className = show ? "bi bi-eye-slash" : "bi bi-eye";
+    });
+});
+</script>
 {% endblock %}
